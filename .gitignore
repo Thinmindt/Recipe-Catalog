@@ -1,0 +1,4 @@
+/venv
+.flaskenv
+.vscode
+/app/__pycache__
