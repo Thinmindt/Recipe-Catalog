@@ -1,4 +1,4 @@
 /venv
 .flaskenv
 .vscode
-/app/__pycache__
+__pycache__/
