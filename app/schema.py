@@ -3,6 +3,12 @@ from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 from app.models import User, Recipe
 from app import db
 from typing import Union
+from base64 import b64decode
+
+def convert_graphene_id_to_int(grapheneID):
+    string = b64decode(grapheneID).decode()
+    colonIndex = string.index(':')
+    return int(string[colonIndex+1:])
 
 class UserObject(SQLAlchemyObjectType):
     class Meta:
@@ -64,12 +70,15 @@ class Query(graphene.ObjectType):
     )
 
     @staticmethod
-    def resolve_recipe(args, info, recipeId: Union[int, None] = None):
+    def resolve_recipe(args, info, recipeId: Union[graphene.ID, None] = None):
         query = RecipeObject.get_query(info=info)
+        print(recipeId)
         
         if recipeId:
-            query.filter(Recipe.id == recipeId)
-        
+            id = convert_graphene_id_to_int(recipeId)
+            print(id)
+            query = query.filter_by(id = id)
+            
         recipe = query.first()
         return recipe
 
