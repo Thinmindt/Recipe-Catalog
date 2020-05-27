@@ -85,6 +85,26 @@ class UpdateRecipe(graphene.Mutation):
         
         return UpdateRecipe(recipe=recipe)
 
+class DeleteRecipeInput(graphene.InputObjectType):
+    """Arguments to delete a recipe. Only requires ID"""
+    id = graphene.ID(required=True, description="Global ID of the recipe")
+
+class DeleteRecipe(graphene.Mutation):
+    """Delete a recipe"""
+    ok = graphene.Boolean()
+
+    class Arguments:
+        input = DeleteRecipeInput(required=True)
+    
+    def mutate(self, info, input):
+        data = utils.input_to_dictionary(input)
+
+        recipe = db.session.query(Recipe).filter_by(id=data['id']).first()
+        db.session.delete(recipe)
+        db.session.commit()
+
+        return DeleteRecipe(ok=True)
+
 class Query(graphene.ObjectType):
     node = graphene.relay.Node.Field()
     all_users = SQLAlchemyConnectionField(UserObject)
@@ -95,5 +115,6 @@ class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     create_recipe = CreateRecipe.Field()
     update_recipe = UpdateRecipe.Field()
+    delete_recipe = DeleteRecipe.Field()
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
