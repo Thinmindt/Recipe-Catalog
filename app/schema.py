@@ -6,6 +6,8 @@ from app import db
 from typing import Union
 from base64 import b64decode
 import app.utils as utils
+from graphene_file_upload.scalars import Upload
+import datetime
 
 class UserObject(SQLAlchemyObjectType):
     class Meta:
@@ -34,7 +36,6 @@ class RecipeAttribute:
     web_link = graphene.String(description="Link to source page")
     book_title = graphene.String(description="Title of the book containing the recipe")
     book_page = graphene.Int(description="Page number the recipe is on")
-    book_image_path = graphene.String(description="Path to image of the recipe")
     rating = graphene.Int(description="The rating given by the user")
     notes = graphene.String(description="Any comments or notes")
 
@@ -46,7 +47,7 @@ class RecipeObject(SQLAlchemyObjectType, RecipeAttribute):
 
 class CreateRecipeInput(graphene.InputObjectType, RecipeAttribute):
     """Arguments to create a recipe"""
-    pass
+    image = Upload(required=False)
 
 class CreateRecipe(graphene.Mutation):
     """Mutation to create a recipe"""
@@ -58,6 +59,20 @@ class CreateRecipe(graphene.Mutation):
     
     def mutate(self, info, input):
         data = utils.input_to_dictionary(input)
+
+        if ('image' in data.keys()) and type(input.image) == "FileStorage":
+            imageFilename = str(datetime.datetime.now())
+            imageFilename = imageFilename.replace(' ', '--')
+            imageFilename = imageFilename.replace('.', '-')
+            imageFilename = imageFilename.replace(':', '-')
+            imageFilename = imageFilename + ".png"
+            imageFilePath = "./images/" + imageFilename
+
+            input.image.save(imageFilePath)
+            data['book_image_path'] = imageFilename
+        
+        data.pop('image')
+        
         recipe = Recipe(**data)
         db.session.add(recipe)
         db.session.commit()
@@ -67,6 +82,7 @@ class CreateRecipe(graphene.Mutation):
 class UpdateRecipeInput(graphene.InputObjectType, RecipeAttribute):
     """Arguments to update a recipe"""
     id = graphene.ID(required=True, description="Global ID of the recipe")
+    image = Upload(required=False)
 
 class UpdateRecipe(graphene.Mutation):
     """Update a recipe"""
@@ -77,6 +93,19 @@ class UpdateRecipe(graphene.Mutation):
     
     def mutate(self, info, input):
         data = utils.input_to_dictionary(input)
+
+        if ('image' in data.keys()) and type(input.image) == "FileStorage":
+            imageFilename = str(datetime.datetime.now())
+            imageFilename = imageFilename.replace(' ', '--')
+            imageFilename = imageFilename.replace('.', '-')
+            imageFilename = imageFilename.replace(':', '-')
+            imageFilename = imageFilename + ".png"
+            imageFilePath = "./images/" + imageFilename
+
+            input.image.save(imageFilePath)
+            data['book_image_path'] = imageFilename
+        
+        data.pop('image')
         
         recipe = db.session.query(Recipe).filter_by(id=data['id'])
         recipe.update(data)
