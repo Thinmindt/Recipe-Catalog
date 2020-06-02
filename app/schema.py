@@ -60,16 +60,12 @@ class CreateRecipe(graphene.Mutation):
     def mutate(self, info, input):
         data = utils.input_to_dictionary(input)
 
-        if ('image' in data.keys()) and type(input.image) == "FileStorage":
-            imageFilename = str(datetime.datetime.now())
-            imageFilename = imageFilename.replace(' ', '--')
-            imageFilename = imageFilename.replace('.', '-')
-            imageFilename = imageFilename.replace(':', '-')
-            imageFilename = imageFilename + ".png"
-            imageFilePath = "./images/" + imageFilename
-
-            input.image.save(imageFilePath)
-            data['book_image_path'] = imageFilename
+        print(input)
+        if (data['image'] and type(data['image']) is list):
+            for image in data['image']:
+                print(image)
+        elif (data['image'] and not data['image'] is None):
+            data['book_image_path'] = utils.handle_image(data.image)
         
         data.pop('image')
         
@@ -94,16 +90,13 @@ class UpdateRecipe(graphene.Mutation):
     def mutate(self, info, input):
         data = utils.input_to_dictionary(input)
 
-        if ('image' in data.keys()) and type(input.image) == "FileStorage":
-            imageFilename = str(datetime.datetime.now())
-            imageFilename = imageFilename.replace(' ', '--')
-            imageFilename = imageFilename.replace('.', '-')
-            imageFilename = imageFilename.replace(':', '-')
-            imageFilename = imageFilename + ".png"
-            imageFilePath = "./images/" + imageFilename
-
-            input.image.save(imageFilePath)
-            data['book_image_path'] = imageFilename
+        print(input)
+        
+        if (data['image'] and type(data['image']) is list):
+            for image in data['image']:
+                print(image)
+        elif ('image' in data.keys() and not data['image'] is None):
+            data['book_image_path'] = utils.handle_image(data.image)
         
         data.pop('image')
         

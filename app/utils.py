@@ -16,3 +16,22 @@ def input_to_dictionary(input):
       input[key] = from_global_id(input[key])[1]
     dictionary[key] = input[key]
   return dictionary
+
+def handle_image(image):
+  """Save image to disk using timestamp.
+
+  Parameters:
+    image - image to save
+
+  Returns:
+    imageFilename - name of the file in ./images/
+  """
+  imageFilename = str(datetime.datetime.now())
+  imageFilename = imageFilename.replace(' ', '--')
+  imageFilename = imageFilename.replace('.', '-')
+  imageFilename = imageFilename.replace(':', '-')
+  imageFilename = imageFilename + ".png"
+  imageFilePath = "./images/" + imageFilename
+
+  image.save(imageFilePath)
+  return imageFilename
