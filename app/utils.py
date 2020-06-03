@@ -1,4 +1,7 @@
 from graphql_relay.node.node import from_global_id
+import datetime
+import uuid
+
 
 def input_to_dictionary(input):
   """Convert Graphene inputs into a dictionary
@@ -26,7 +29,7 @@ def handle_image(image):
   Returns:
     imageFilename - name of the file in ./images/
   """
-  imageFilename = str(datetime.datetime.now())
+  imageFilename = str(uuid.uuid1())
   imageFilename = imageFilename.replace(' ', '--')
   imageFilename = imageFilename.replace('.', '-')
   imageFilename = imageFilename.replace(':', '-')

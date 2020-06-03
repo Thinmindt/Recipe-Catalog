@@ -20,7 +20,8 @@ class Image(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_recipe = db.Column(db.Integer, db.ForeignKey('recipe.id'))
     recipe = relationship("Recipe", back_populates="images")
-    url = db.Column(db.Text, nullable=False)
+    filename = db.Column(db.Text, nullable=False)
+    date_added = db.Column(db.DateTime, nullable=True)
 
 class Recipe(db.Model):
     """Details on recipe"""
