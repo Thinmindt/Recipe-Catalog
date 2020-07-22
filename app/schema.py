@@ -1,7 +1,7 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 from graphql_relay.node.node import from_global_id
-from app.models import User, Recipe, Image
+from app.models import User, Recipe, Image, RecipeCategory
 from app import db
 from typing import Union
 from base64 import b64decode
@@ -30,6 +30,15 @@ class CreateUser(graphene.Mutation):
 
         return CreateUser(user=user)
 
+class RecipeCategoryAttribute:
+    name = graphene.String(description="Name of Category")
+
+class RecipeCategoryObject(SQLAlchemyObjectType, RecipeCategoryAttribute):
+    """ Recipe Category node """
+    class Meta: 
+        model = RecipeCategory
+        interfaces = (graphene.relay.Node, )
+
 class ImageAttribute:
     filename = graphene.String(description="File name in image folder")
     id_recipe = graphene.ID(description="Global ID of associated recipe")
@@ -48,6 +57,7 @@ class Query(graphene.ObjectType):
     recipe = graphene.relay.Node.Field(RecipeObject)
     images = SQLAlchemyConnectionField(ImageObject)
     image = graphene.relay.Node.Field(ImageObject)
+    recipe_categories = SQLAlchemyConnectionField(RecipeCategoryObject)
 
 class Mutation(graphene.ObjectType):
     create_user = CreateUser.Field()

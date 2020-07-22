@@ -17,7 +17,7 @@ def index():
 def image_host(filename):
     """Returns raw image from the images/ directory
     """
-    return send_from_directory(os.path.join("..", "images", filename))
+    return send_from_directory(os.path.join("..", "images"), filename)
 
 @app.route('/image/<filename>/h+w/<width>/<height>')
 def image_host_resized(filename, height, width):

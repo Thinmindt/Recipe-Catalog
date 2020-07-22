@@ -8,7 +8,8 @@ import datetime
 
 class RecipeAttribute:
     title = graphene.String(description="Title of the Recipe")
-    type = graphene.String(description="Source type: Book or Website")
+    category = graphene.String(description="Classification of Recipe")
+    source_type = graphene.String(description="Source type: Book or Website")
     web_link = graphene.String(description="Link to source page")
     book_title = graphene.String(description="Title of the book containing the recipe")
     book_page = graphene.Int(description="Page number the recipe is on")

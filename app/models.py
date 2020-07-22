@@ -28,7 +28,9 @@ class Recipe(db.Model):
     __tablename__ = 'recipe'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), index=True, unique=True)
-    type = db.Column(db.String(8), index=True)
+    id_recipe_category = db.Column(db.Integer, db.ForeignKey('category.id'))
+    recipe_category = relationship("RecipeCategory", back_populates="recipes")
+    source_type = db.Column(db.String(8), index=True)
     web_link = db.Column(db.Text, nullable=True)
     book_title = db.Column(db.String(120), index=True, nullable=True)
     book_page = db.Column(db.Integer, nullable=True)
@@ -36,3 +38,13 @@ class Recipe(db.Model):
     rating = db.Column(db.Integer, nullable=True)
     notes = db.Column(db.Text, nullable=True)
     images = relationship("Image", back_populates="recipe")
+
+class RecipeCategory(db.Model):
+    """Categories to sort Recipes into"""
+    __tablename__ = 'category'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), index=True, unique=True)
+    recipes = relationship("Recipe", back_populates="recipe_category")
+
+    def __repr__(self):
+        return '<RecipeCategory {}>'.format(self.name)
