@@ -1,7 +1,7 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphene_file_upload.scalars import Upload
-from app.models import Recipe
+from app.models import Recipe, Image
 from app import db
 import app.utils as utils
 import datetime
@@ -101,8 +101,13 @@ class UpdateRecipe(graphene.Mutation):
         recipe = db.session.query(Recipe).filter_by(id=data['id'])
         recipe.update(data)
         db.session.commit()
+
         recipe = db.session.query(Recipe).filter_by(id=data['id']).first()
-        
+        for image in images:
+            print(image)
+            recipe.images.append(image)
+        db.session.commit()
+
         return UpdateRecipe(recipe=recipe)
 
 class DeleteRecipeInput(graphene.InputObjectType):
