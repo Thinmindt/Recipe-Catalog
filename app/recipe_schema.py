@@ -81,6 +81,17 @@ class UpdateRecipe(graphene.Mutation):
         data = utils.input_to_dictionary(input)
 
         print(input)
+        images = []
+        # Handle recipe images. If it is a list, save all. If singleton, save it.
+        if ('recipeImages' in data.keys() and type(data['recipeImages']) is list):
+            for recipe_image in data['recipeImages']:
+                image_filename = utils.handle_image(recipe_image)
+                images.append(Image(filename=image_filename, 
+                                    date_added=datetime.datetime.now()))
+            data.pop('recipeImages')
+        elif ('recipeImages' in data.keys() and not type(data['recipeImages']) is None):
+            images.append(Image(filename=utils.handle_image(data['recipeImages'])))
+            data.pop('recipeImages')
         
         if ('bookImage' in data.keys() and not data['bookImage'] is None):
             data['book_image_path'] = utils.handle_image(data['bookImage'])
