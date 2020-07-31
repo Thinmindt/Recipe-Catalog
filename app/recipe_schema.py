@@ -80,7 +80,8 @@ class UpdateRecipe(graphene.Mutation):
     def mutate(self, info, input):
         data = utils.input_to_dictionary(input)
 
-        print(input)
+        print("Updating Recipe")
+        print("input: %s" % input)
         images = []
         # Handle recipe images. If it is a list, save all. If singleton, save it.
         if ('recipeImages' in data.keys() and type(data['recipeImages']) is list):
