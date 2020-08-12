@@ -43,9 +43,10 @@ class CreateRecipe(graphene.Mutation):
         # Handle recipe images. If it is a list, save all. If singleton, save it.
         if ('recipeImages' in data.keys() and type(data['recipeImages']) is list):
             for recipe_image in data['recipeImages']:
-                image_filename = utils.handle_image(recipe_image)
-                images.append(Image(filename=image_filename, 
-                                    date_added=datetime.datetime.now()))
+                if recipe_image:
+                    image_filename = utils.handle_image(recipe_image)
+                    images.append(Image(filename=image_filename, 
+                                        date_added=datetime.datetime.now()))
             data.pop('recipeImages')
         elif ('recipeImages' in data.keys() and not type(data['recipeImages']) is None):
             images.append(Image(filename=utils.handle_image(data['recipeImages'])))
@@ -86,9 +87,10 @@ class UpdateRecipe(graphene.Mutation):
         # Handle recipe images. If it is a list, save all. If singleton, save it.
         if ('recipeImages' in data.keys() and type(data['recipeImages']) is list):
             for recipe_image in data['recipeImages']:
-                image_filename = utils.handle_image(recipe_image)
-                images.append(Image(filename=image_filename, 
-                                    date_added=datetime.datetime.now()))
+                if recipe_image:
+                    image_filename = utils.handle_image(recipe_image)
+                    images.append(Image(filename=image_filename, 
+                                        date_added=datetime.datetime.now()))
             data.pop('recipeImages')
         elif ('recipeImages' in data.keys() and not type(data['recipeImages']) is None):
             images.append(Image(filename=utils.handle_image(data['recipeImages'])))

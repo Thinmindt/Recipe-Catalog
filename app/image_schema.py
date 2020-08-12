@@ -31,9 +31,14 @@ class DeleteImage(graphene.Mutation):
         data = utils.input_to_dictionary(input)
 
         image = db.session.query(Image).filter_by(id=data['id']).first()
-        
+        filename = image.filename
+
         print("Deleting image: %s" % image)
+        #Remove from database
         db.session.delete(image)
         db.session.commit()
+
+        #Remove from filesystem
+        utils.delete_image(filename)
 
         return DeleteImage(ok=True)

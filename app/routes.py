@@ -22,7 +22,7 @@ def image_host(filename):
 @app.route('/image/<filename>/h+w/<height>/<width>')
 def image_host_resized(filename, height, width):
     """resize image at images/<filename> with the given
-    width and height
+    width and height. Does not crop or change image aspect ratio.
     """
     path = os.path.join("images", filename)
     img_io = BytesIO()
