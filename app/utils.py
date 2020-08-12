@@ -53,7 +53,7 @@ def handle_image(image):
   imageFilename = imageFilename.replace('.', '-')
   imageFilename = imageFilename.replace(':', '-')
   imageFilename = imageFilename + ".png"
-  imageFilePath = resolve_image_filepath(filename)
+  imageFilePath = resolve_image_filepath(imageFilename)
 
   image.save(imageFilePath)
   return imageFilename
