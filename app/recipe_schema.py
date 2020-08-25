@@ -1,7 +1,7 @@
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType
 from graphene_file_upload.scalars import Upload
-from app.models import Recipe, Image
+from app.models import Recipe, Image, RecipeCategory
 from app import db
 import app.utils as utils
 import datetime
@@ -54,11 +54,19 @@ class CreateRecipe(graphene.Mutation):
         
         if ('bookImage' in data.keys() and not data['bookImage'] is None):
             data['book_image_path'] = utils.handle_image(data['bookImage'])
-            data.pop('bookImage')
+        data.pop('bookImage')
+        
+        # Find recipe category and add entry reference
+        category = None
+        if ('category' in data.keys() and not data['category'] is None):
+            category = RecipeCategory.query.filter_by(name=data['category']).first()
+            data.pop('category')
         
         recipe = Recipe(**data)
         # add relationship to images saved above
         recipe.images = images
+        # add relationship to RecipeCategory
+        recipe.id_recipe_category = category.id
 
         db.session.add(recipe)
         db.session.commit()
@@ -100,6 +108,13 @@ class UpdateRecipe(graphene.Mutation):
             data['book_image_path'] = utils.handle_image(data['bookImage'])
         
         data.pop('bookImage')
+        
+        # Find recipe category and add entry reference
+        category = None
+        if ('category' in data.keys() and not data['category'] is None):
+            category = RecipeCategory.query.filter_by(name=data['category']).first()
+            data.pop('category')
+            data['id_recipe_category'] = category.id
         
         recipe = db.session.query(Recipe).filter_by(id=data['id'])
         recipe.update(data)
