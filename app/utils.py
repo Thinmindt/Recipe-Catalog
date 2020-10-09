@@ -3,12 +3,14 @@
 Includes:
   Conversion from Graphene input object into a Python dictionary
   Filesystem interface functions for image files
+  Set default Categories in DB
 """
 from graphql_relay.node.node import from_global_id
 import datetime
 import uuid
 import os
-from app.models import Image
+from app.models import Image, RecipeCategory
+from app import db
 
 
 def input_to_dictionary(input):
@@ -106,3 +108,10 @@ def delete_images_without_database_reference(dryRun = False):
           delete_image(filename)
       else:
         print("%s is in the database. Save it." % filename)
+
+def create_default_categories():
+  categories = ['Bread', 'Breakfast', 'Dip', 'Main', 'Side', 'Soup', 'Sweets']
+  for name in categories:
+    if (RecipeCategory.query.filter_by(name=name).first() == None):
+      db.session.add(RecipeCategory(name=name))
+  db.session.commit()
